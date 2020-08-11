@@ -2,7 +2,10 @@
 
 namespace Ssh;
 
-class SshConfigFileConfigurationTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+use Ssh\Exception\RuntimeException;
+
+class SshConfigFileConfigurationTest extends TestCase
 {
     public function testParseValidSshConfigFile()
     {
@@ -46,12 +49,11 @@ class SshConfigFileConfigurationTest extends \PHPUnit_Framework_TestCase
         ), 'configs', $config);
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Unable to find configuration for host 'notfound'
-     */
     public function testParseSshConfigFileHostNotFound()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Unable to find configuration for host 'notfound'");
+
         $config = new SshConfigFileConfiguration(__DIR__ . '/Fixtures/config_valid', 'notfound');
     }
 
@@ -61,7 +63,7 @@ class SshConfigFileConfigurationTest extends \PHPUnit_Framework_TestCase
         $file = __DIR__ . '/Fixtures/config_invalid';
         try {
             new SshConfigFileConfiguration($file, 'test');
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $exceptions++;
             $this->assertEquals("The file '$file' is not parsable at line '1'", $e->getMessage());
         }
@@ -80,12 +82,11 @@ class SshConfigFileConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals('12345', 'port', $config);
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage The file 'fakefile' does not exist or is not readable
-     */
     public function testParseNonExsistantSshConfigFile()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("The file 'fakefile' does not exist or is not readable");
+
         new SshConfigFileConfiguration('fakefile', 'test');
     }
 
@@ -145,12 +146,11 @@ class SshConfigFileConfigurationTest extends \PHPUnit_Framework_TestCase
         ), 'config', $config);
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Can not authenticate for 'test.com' could not find user to authenticate as
-     */
     public function testGetAuthenticationFailed()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Can not authenticate for 'test.com' could not find user to authenticate as");
+
         $config = new SshConfigFileConfiguration(__DIR__ . '/Fixtures/config_valid', 'test');
         $config->getAuthentication();
     }

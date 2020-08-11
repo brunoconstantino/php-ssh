@@ -4,8 +4,10 @@
 namespace Ssh\FunctionalTests;
 
 
+use PHPUnit\Framework\TestCase;
 use Ssh\Authentication\Password;
 use Ssh\Configuration;
+use Ssh\Exception\RuntimeException;
 use Ssh\Session;
 use Ssh\Sftp;
 use Symfony\Component\Filesystem\Filesystem;
@@ -17,7 +19,7 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * @covers \Ssh\Sftp
  */
-class SftpTest extends \PHPUnit_Framework_TestCase
+class SftpTest extends TestCase
 {
     /** @var Configuration */
     private $configuration;
@@ -192,11 +194,10 @@ class SftpTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testListNotExistingDirectory()
     {
+        $this->expectException(RuntimeException::class);
+
         $path = $this->tmpDir . '/does_not_exist';
 
         $this->sftp->listDirectory($path);
@@ -258,4 +259,3 @@ class SftpTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($path, $list['files']);
     }
 }
- 

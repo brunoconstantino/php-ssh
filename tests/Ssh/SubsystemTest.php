@@ -2,14 +2,17 @@
 
 namespace Ssh;
 
+use PHPUnit\Framework\TestCase;
+use Ssh\Exception\InvalidArgumentException;
+
 /**
  * @covers \Ssh\Subsystem
  */
-class SubsystemTest extends \PHPUnit_Framework_TestCase
+class SubsystemTest extends TestCase
 {
     public function testSessionResourceIsNotUsedOnCreation()
     {
-        $session = $this->getMock(
+        $session = $this->createMock(
             'Ssh\Session', array(), array(), '', false
         );
 
@@ -20,12 +23,11 @@ class SubsystemTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The session must be either a Session instance or a SSH session resource.
-     */
     public function testInvalidContructorArgumentException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The session must be either a Session instance or a SSH session resource.');
+
         new Exec(false);
     }
 
@@ -39,7 +41,7 @@ class SubsystemTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSessionResourceWillCallSessionGetResource()
     {
-        $session = $this->getMock(
+        $session = $this->createMock(
             'Ssh\Session', array('getResource'), array(), '', false
         );
         $session->expects($this->once())->method('getResource')->will($this->returnValue('aResource'));
